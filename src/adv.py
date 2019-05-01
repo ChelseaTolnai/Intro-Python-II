@@ -2,6 +2,7 @@ import textwrap
 
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -46,6 +47,28 @@ player = {
     'player1': Player('Mr. Adventure', room['outside']),
 }
 
+# Create items
+
+item = {
+    'rope':    Item("Long Rope",
+                    "Sturdy braided rope approximately 30 feet in length."),
+    'torch':   Item("Burning Torch",
+                    "Portable source of light and heat."),
+    'pickaxe': Item("Trusty Pickaxe",
+                    "Multi-use hand tool with a metal spike attached \
+                     perpendicularly to a wooden handle."),
+    'rock':    Item("Heavy Boulder",
+                    "A large rock too heavy to pick up \
+                     located near the steep cliff.")
+}
+
+# Added items to rooms
+
+room['foyer'].add_item(item['torch'])
+room['overlook'].add_item(item['rope'])
+room['overlook'].add_item(item['rock'])
+room['treasure'].add_item(item['pickaxe'])
+
 # Write a loop that:
 #
 # * Prints the current room name
@@ -56,7 +79,6 @@ player = {
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
-
 
 def go_dir(direction, current_room):
     if direction == 'n' and current_room.n_to:
@@ -80,7 +102,8 @@ def go_room(new_room):
 
 try:
     player = player['player1']
-    print(f"\n{textwrap.fill(str(player))}")
+    print(f"\nWelcome {textwrap.fill(str(player))}")
+
     while True:
         print("\nOptions - "
               "[n]:go north / "
@@ -93,9 +116,9 @@ try:
         if cmd == 'q':
             print("\nCome back soon!\n")
             break
-        elif cmd == 'n' or 's' or 'e' or 'w':
+        elif cmd == 'n' or cmd == 's' or cmd == 'e' or cmd == 'w':
             go_dir(cmd, player.current_room)
         else:
-            print("Invalid action.")
+            print("\nInvalid action.")
 except:
     print("Oops, something went wrong!")
