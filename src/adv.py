@@ -7,7 +7,7 @@ from player import Player
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons."),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -58,9 +58,29 @@ player = {
 # If the user enters "q", quit the game.
 
 
+def go_dir(direction, current_room):
+    if direction == 'n' and current_room.n_to:
+        go_room(current_room.n_to)
+    elif direction == 's' and current_room.s_to:
+        go_room(current_room.s_to)
+    elif direction == 'e' and current_room.e_to:
+        go_room(current_room.e_to)
+    elif direction == 'w' and current_room.w_to:
+        go_room(current_room.w_to)
+    else:
+        text = f"You cannot go this way from {current_room.name}. " \
+               f"{current_room.description} What would you like to do?"
+        print(f"\n{textwrap.fill(text)}")
+
+
+def go_room(new_room):
+    global player
+    player.current_room = new_room
+    print(f"\n{textwrap.fill(str(player))}")
+
 try:
-    player = str(player['player1'])
-    print(f"\n{textwrap.fill(player)}")
+    player = player['player1']
+    print(f"\n{textwrap.fill(str(player))}")
     while True:
         print("\nOptions - "
               "[n]:go north / "
@@ -73,8 +93,9 @@ try:
         if cmd == 'q':
             print("\nCome back soon!\n")
             break
+        elif cmd == 'n' or 's' or 'e' or 'w':
+            go_dir(cmd, player.current_room)
         else:
-            print(cmd)
-            break
+            print("Invalid action.")
 except:
-    print("Invalid input or command")
+    print("Oops, something went wrong!")
