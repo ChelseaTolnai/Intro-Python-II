@@ -8,4 +8,5 @@ class Player:
         self.current_room = current_room
 
     def __str__(self):
-        return f'{self.name}. {self.current_room}'
+        return f'{self.name}, you are in the {self.current_room}. ' \
+                'What would you like to do?'
