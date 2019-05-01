@@ -51,15 +51,15 @@ player = {
 # Create items
 
 item = {
-    'rope':    Item("Long Rope", """Sturdy braided rope approximately 30 feet
+    'rope':    Item("Rope", """Sturdy braided rope approximately 30 feet
  in length."""),
 
-    'torch':   Item("Burning Torch", """Portable source of light and heat."""),
+    'torch':   Item("Torch", """Portable source of light and heat."""),
 
-    'pickaxe': Item("Trusty Pickaxe", """Multi-use hand tool with a metal
+    'pickaxe': Item("Pickaxe", """Multi-use hand tool with a metal
  spike attached perpendicularly to a wooden handle."""),
 
-    'rock':    Item("Heavy Boulder", """A large rock too heavy to pick up
+    'rock':    Item("Boulder", """A large rock too heavy to pick up
  located near the steep cliff.""")
 }
 
@@ -127,6 +127,15 @@ def go_room(new_room):
     player.current_room = new_room
     color.prGreen(f"\n{textwrap.fill(str(player))}")
 
+
+def take_item(item, current_room):
+    room_item = [True for i in current_room.items if item == i.name.lower()]
+    if room_item[0]:
+        print(item)
+        # item[item].on_take()
+    else:
+        color.prYellow(f"\nItem is not in the {current_room.name}. ")
+
 try:
     player = player['player1']
     color.prGreen(f"\nWelcome {player.name}! {textwrap.fill(str(player))}")
@@ -141,14 +150,26 @@ try:
               "\nOther       = [action] [object]"
               )
         cmd = input("Enter action: ")
-        if cmd == 'q':
-            color.prGreen("\nCome back soon!\n")
-            break
-        elif cmd == 'l' or cmd == 'i':
-            get_inv(cmd, player.current_room)
-        elif cmd == 'n' or cmd == 's' or cmd == 'e' or cmd == 'w':
-            go_dir(cmd, player.current_room)
+        if len(cmd) == 1:
+            if cmd == 'q':
+                color.prGreen("\nCome back soon!\n")
+                break
+            elif cmd == 'l' or cmd == 'i':
+                get_inv(cmd, player.current_room)
+            elif cmd == 'n' or cmd == 's' or cmd == 'e' or cmd == 'w':
+                go_dir(cmd, player.current_room)
+            else:
+                color.prRed("\nInvalid action.")
         else:
-            color.prRed("\nInvalid action.")
+            cmd = cmd.split(' ')
+            action = cmd[0].lower()
+            obj = cmd[1].lower()
+            if action == 'take' or action == 'get' or action == 'add':
+                take_item(obj, player.current_room)
+            elif action == 'drop' or action == 'leave' or action == 'remove':
+                drop_item(obj, player.current_room)
+            else:
+                color.prRed("\nInvalid action.")
+
 except:
     color.prRed("\nOops, something went wrong!")
