@@ -1,4 +1,5 @@
 import textwrap
+import color
 
 from room import Room
 from player import Player
@@ -89,20 +90,21 @@ def get_inv(inventory, current_room):
     global player
     if inventory == 'i':
         if len(player.list_items()) < 1:
-            print(f"\nYou don't have any items at this time.")
+            color.prCyan(f"\nYou don't have any items at this time.")
         else:
-            print(f"\nYou are currently carrying:")
+            color.prCyan(f"\nYou are currently carrying:")
             for i in player.list_items():
-                print(f'-{i}')
+                color.prCyan(f'-{i}')
+        color.prGreen("What would you like to do?")
 
     elif inventory == 'l':
-        print(f"\nYou are currently in the {current_room.name}.")
         if len(current_room.list_items()) < 1:
-            print(f"You look arround and see that the area is empty.")
+            color.prCyan(f"\nYou look arround and see that the area is empty.")
         else:
-            print(f"You look around and find:")
+            color.prCyan(f"\nYou look around and find:")
             for i in current_room.list_items():
-                print(f'-{i}')
+                color.prCyan(f'-{i}')
+        color.prGreen(f"{textwrap.fill(str(player))}")
 
 
 def go_dir(direction, current_room):
@@ -115,37 +117,38 @@ def go_dir(direction, current_room):
     elif direction == 'w' and current_room.w_to:
         go_room(current_room.w_to)
     else:
-        text = f"You cannot go this way from {current_room.name}. " \
-               f"{current_room.description} What would you like to do?"
-        print(f"\n{textwrap.fill(text)}")
+        color.prYellow(f"\nYou cannot go this way from {current_room.name}. ")
+        text = f"{current_room.description} What would you like to do?"
+        color.prGreen(f"{textwrap.fill(text)}")
 
 
 def go_room(new_room):
     global player
     player.current_room = new_room
-    print(f"\n{textwrap.fill(str(player))}")
+    color.prGreen(f"\n{textwrap.fill(str(player))}")
 
 try:
     player = player['player1']
-    print(f"\nWelcome {textwrap.fill(str(player))}")
+    color.prGreen(f"\nWelcome {player.name}! {textwrap.fill(str(player))}")
 
     while True:
         print("\nOptions     = [l]:look around / [i]:inventory / [q]:quit"
               "\nMove        = "
-              "[n]:go north / "
-              "[s]:go south / "
+              "[n]:go north    / "
+              "[s]:go south  / "
               "[e]:go east / "
               "[w]:go west"
+              "\nOther       = [action] [object]"
               )
         cmd = input("Enter action: ")
         if cmd == 'q':
-            print("\nCome back soon!\n")
+            color.prGreen("\nCome back soon!\n")
             break
         elif cmd == 'l' or cmd == 'i':
             get_inv(cmd, player.current_room)
         elif cmd == 'n' or cmd == 's' or cmd == 'e' or cmd == 'w':
             go_dir(cmd, player.current_room)
         else:
-            print("\nInvalid action.")
+            color.prRed("\nInvalid action.")
 except:
-    print("Oops, something went wrong!")
+    color.prRed("\nOops, something went wrong!")
