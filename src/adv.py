@@ -50,16 +50,16 @@ player = {
 # Create items
 
 item = {
-    'rope':    Item("Long Rope",
-                    "Sturdy braided rope approximately 30 feet in length."),
-    'torch':   Item("Burning Torch",
-                    "Portable source of light and heat."),
-    'pickaxe': Item("Trusty Pickaxe",
-                    "Multi-use hand tool with a metal spike attached \
-                     perpendicularly to a wooden handle."),
-    'rock':    Item("Heavy Boulder",
-                    "A large rock too heavy to pick up \
-                     located near the steep cliff.")
+    'rope':    Item("Long Rope", """Sturdy braided rope approximately 30 feet
+ in length."""),
+
+    'torch':   Item("Burning Torch", """Portable source of light and heat."""),
+
+    'pickaxe': Item("Trusty Pickaxe", """Multi-use hand tool with a metal
+ spike attached perpendicularly to a wooden handle."""),
+
+    'rock':    Item("Heavy Boulder", """A large rock too heavy to pick up
+ located near the steep cliff.""")
 }
 
 # Added items to rooms
@@ -68,6 +68,10 @@ room['foyer'].add_item(item['torch'])
 room['overlook'].add_item(item['rope'])
 room['overlook'].add_item(item['rock'])
 room['treasure'].add_item(item['pickaxe'])
+
+# player['player1'].add_item(item['rope'])
+# player['player1'].add_item(item['torch'])
+
 
 # Write a loop that:
 #
@@ -79,6 +83,27 @@ room['treasure'].add_item(item['pickaxe'])
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+
+def get_inv(inventory, current_room):
+    global player
+    if inventory == 'i':
+        if len(player.list_items()) < 1:
+            print(f"\nYou don't have any items at this time.")
+        else:
+            print(f"\nYou are currently carrying:")
+            for i in player.list_items():
+                print(f'-{i}')
+
+    elif inventory == 'l':
+        print(f"\nYou are currently in the {current_room.name}.")
+        if len(current_room.list_items()) < 1:
+            print(f"You look arround and see that the area is empty.")
+        else:
+            print(f"You look around and find:")
+            for i in current_room.list_items():
+                print(f'-{i}')
+
 
 def go_dir(direction, current_room):
     if direction == 'n' and current_room.n_to:
@@ -105,17 +130,19 @@ try:
     print(f"\nWelcome {textwrap.fill(str(player))}")
 
     while True:
-        print("\nOptions - "
+        print("\nOptions     = [l]:look around / [i]:inventory / [q]:quit"
+              "\nMove        = "
               "[n]:go north / "
               "[s]:go south / "
               "[e]:go east / "
-              "[w]:go west / "
-              "[q]:quit"
+              "[w]:go west"
               )
         cmd = input("Enter action: ")
         if cmd == 'q':
             print("\nCome back soon!\n")
             break
+        elif cmd == 'l' or cmd == 'i':
+            get_inv(cmd, player.current_room)
         elif cmd == 'n' or cmd == 's' or cmd == 'e' or cmd == 'w':
             go_dir(cmd, player.current_room)
         else:

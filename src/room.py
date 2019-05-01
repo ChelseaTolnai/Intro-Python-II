@@ -24,4 +24,4 @@ class Room:
         self.items.remove(item)
 
     def list_items(self):
-        return [i.name for i in self.items]
+        return [f'{i.name} ({i.description})' for i in self.items]
