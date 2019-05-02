@@ -23,4 +23,4 @@ class Item:
     def on_drop(self, player):
         player.remove_item(self)
         player.current_room.add_item(self)
-        return f'You have dropped the {self.name}.'
+        color.prGreen(f'\nYou have dropped the {self.name}.')

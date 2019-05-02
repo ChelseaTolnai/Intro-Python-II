@@ -206,15 +206,21 @@ def go_room(new_room):
 
 
 def take_item(current_item):
-    if current_item in [i.name.lower() for i in player.current_room.items]:
+    if current_item == 'it' and len(player.current_room.items) == 1:
+        player.current_room.items[0].on_take(player)
+    elif current_item == 'it' and len(player.current_room.items) > 1:
+        color.prYellow(f"\n{action} what?")
+    elif current_item in [i.name.lower() for i in player.current_room.items]:
         item[current_item].on_take(player)
     else:
         color.prYellow(f"\nItem is not in the {current_room.name}. ")
 
 
 def drop_item(current_item):
-    if current_item in [i.name.lower() for i in player.items]:
-        color.prGreen(f"\n{item[current_item].on_drop(player)}")
+    if current_item == 'it':
+        player.items[-1].on_drop(player)
+    elif current_item in [i.name.lower() for i in player.items]:
+        item[current_item].on_drop(player)
     else:
         color.prYellow(f"\nYou are not carrying that item.")
 
