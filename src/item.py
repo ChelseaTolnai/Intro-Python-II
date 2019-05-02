@@ -10,3 +10,8 @@ class Item:
         player.add_item(self)
         player.current_room.remove_item(self)
         return f'You have picked up the {self.name}.'
+
+    def on_drop(self, player):
+        player.remove_item(self)
+        player.current_room.add_item(self)
+        return f'You have dropped the {self.name}.'

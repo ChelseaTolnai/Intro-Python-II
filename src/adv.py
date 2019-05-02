@@ -138,11 +138,11 @@ def take_item(current_item, current_room):
         color.prYellow(f"\nItem is not in the {current_room.name}. ")
 
 
-def drop_item(item, current_room):
-    player_item = [True for i in player.items if item == i.name.lower()]
+def drop_item(current_item, current_room):
+    player_item = [True for i in player.items
+                   if current_item == i.name.lower()]
     if len(player_item) > 0:
-        print(item)
-        # item[item].on_take()
+        color.prGreen(f"\n{item[current_item].on_drop(player)}")
     else:
         color.prYellow(f"\nYou are not carrying that item. ")
 
@@ -171,7 +171,8 @@ try:
                     break
                 elif action == 'l' or action == 'i':
                     get_inv(action, player.current_room)
-                elif action == 'n' or action == 's' or action == 'e' or action == 'w':
+                elif (action == 'n' or action == 's' or
+                      action == 'e' or action == 'w'):
                     go_dir(action, player.current_room)
                 else:
                     color.prRed("\nInvalid action.")
