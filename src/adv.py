@@ -8,30 +8,34 @@ from item import Item
 # Declare all the rooms
 
 room = {
-    'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons."),
+    'outside':  Room("Outside Cave Entrance", "North of you, the cave mount \
+beckons."),
 
-    'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+    'foyer':    Room("Foyer", "Dim light filters in from the south. Dusty \
+passages run north and east."),
 
-    'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
-into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+    'overlook': Room("Grand Overlook", "A steep cliff appears before you, \
+falling into the darkness. Ahead to the north, a light flickers in the \
+distance across the chasm, a distance to long to leap."),
 
-    'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+    'narrow':   Room("Narrow Passage", "The narrow passage bends here from \
+west to north. The smell of gold permeates the air."),
 
-    'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south... Or is it?"""),
+    'treasure': Room("Treasure Chamber", "You've found the long-lost treasure \
+chamber! Sadly, it has already been completely emptied by earlier \
+adventurers. The only exit is to the south... Or is it?"),
 
-    'den': Room("Snake Den", """You've entered a dimly lit area surrounded by
-snakes. One false move in the wrong direction will cause a snake to attack
-and the venom will kill you instantly."""),
+    'den': Room("Snake Den", "You've entered a dimly lit area surrounded by \
+snakes. One false move in the wrong direction will cause a snake to attack \
+and the venom will kill you instantly."),
 
-    'cavern': Room("Miner's Cavern", """The room is filled with stalagmites and
-stalactites with nooks and crannies everywhere. Looks like at one point miners
-tried to work in here."""),
+    'cavern': Room("Miner's Cavern", "The room is filled with stalagmites and \
+stalactites with nooks and crannies everywhere. Looks like at one point \
+miners tried to work in here."),
+
+    'hidden': Room("Hidden Treasure Chamber", "You've discovered the hidden \
+treasure that no other explorer has found before. It is filled with gold, \
+silver, rubies, and other beautiful treasures from floor to ceiling."),
 }
 
 
@@ -103,7 +107,7 @@ def get_inv(inventory, current_room):
             color.prCyan(f"\nYou are currently carrying:")
             for i in player.list_items():
                 color.prCyan(f'-{i}')
-        color.prGreen("What would you like to do?")
+        color.prPurple("\nWhat would you like to do?")
 
     elif inventory == 'l':
         if len(current_room.list_items()) < 1:
@@ -113,6 +117,7 @@ def get_inv(inventory, current_room):
             for i in current_room.list_items():
                 color.prCyan(f'-{i}')
         color.prGreen(f"\n{textwrap.fill(str(player))}")
+        color.prPurple("\nWhat would you like to do?")
 
 
 def check_inv(item):
@@ -138,27 +143,42 @@ def has_rope():
         return False
 
 
+def has_pickaxe():
+    if check_inv('pickaxe'):
+        color.prGreen("\nYou used your pickaxe to break through the wall!")
+        return True
+    else:
+        color.prYellow("\nThe wall may be weak but you have nothing to break "
+                       "through it.")
+        return False
+
+
 def check_room(direction, current_room):
     if current_room.name == 'Snake Den':
         if direction == 'n' or direction == 'e':
             color.prRed("\nA snake has attacked and you died instanstly!")
             color.prGreen("Try again!\n")
             return False
-        elif direction == 's':
-            if has_rope():
-                return True
-            else:
-                return False
+        elif direction == 's' and not has_rope():
+            return False
         else:
             return True
     elif current_room.name == 'Grand Overlook':
-        if direction == 'n':
-            if has_rope():
-                return True
-            else:
-                return False
+        if direction == 'n' and not has_rope():
+            return False
         else:
             return True
+    elif current_room.name == 'Treasure Chamber':
+        if direction == 'n':
+            text = "You found a weak spot in the northern wall of the " \
+                   "Treasure Chamber."
+            color.prGreen(f"\n{textwrap.fill(text)}")
+            if has_pickaxe():
+                room['treasure'].n_to = room['hidden']
+                return True
+        elif direction == 'w' or direction == 'e':
+            color.prYellow(f"\nThere is a sturdy wall to that direction.")
+        return True
     else:
         return True
 
@@ -175,9 +195,10 @@ def go_dir(direction, current_room):
             go_room(current_room.w_to)
         else:
             color.prYellow(f"\nYou cannot go this way from "
-                           f"{current_room.name}. ")
-            text = f"{current_room.description} What would you like to do?"
+                           f"{current_room.name}.\n")
+            text = f"{current_room.description}"
             color.prGreen(f"{textwrap.fill(text)}")
+            color.prPurple("\nWhat would you like to do?")
     else:
         global game
         game = False
@@ -186,6 +207,12 @@ def go_dir(direction, current_room):
 def go_room(new_room):
     player.current_room = new_room
     color.prGreen(f"\n{textwrap.fill(str(player))}")
+    if new_room.name == 'Hidden Treasure Chamber':
+        color.prGreen(f"\n***You have won!***\n")
+        global game
+        game = False
+    else:
+        color.prPurple("\nWhat would you like to do?")
 
 
 def take_item(current_item, current_room):
@@ -209,6 +236,10 @@ game = True
 try:
     player = player['player1']
     color.prGreen(f"\nWelcome {player.name}! {textwrap.fill(str(player))}")
+    color.prPurple("\nWhat would you like to do?")
+
+    inventories = ['l', 'i']
+    directions = ['n', 's', 'e', 'w']
 
     while game:
         print("\nOptions     = [l]:look around / [i]:inventory / [q]:quit"
@@ -229,10 +260,9 @@ try:
                 if action == 'q':
                     color.prGreen("\nCome back soon!\n")
                     break
-                elif action == 'l' or action == 'i':
+                elif action in inventories:
                     get_inv(action, player.current_room)
-                elif (action == 'n' or action == 's' or
-                      action == 'e' or action == 'w'):
+                elif action in directions:
                     go_dir(action, player.current_room)
                 else:
                     color.prRed("\nInvalid action.")

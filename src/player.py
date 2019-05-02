@@ -9,8 +9,7 @@ class Player:
         self.items = []
 
     def __str__(self):
-        return f'You are in the {self.current_room} ' \
-                'What would you like to do?'
+        return f'You are in the {self.current_room}'
 
     def add_item(self, item):
         self.items.append(item)
