@@ -63,16 +63,15 @@ player = {
 # Create items
 
 item = {
-    'rope':    Item("Rope", """Sturdy braided rope approximately 30 feet
- in length."""),
+    'rope':    Item("Rope", "Sturdy braided rope approximately 30 ft long."),
 
-    'torch':   Item("Torch", """Portable source of light and heat."""),
+    'torch':   Item("Torch", "Portable source of light and heat."),
 
-    'pickaxe': Item("Pickaxe", """Multi-use hand tool with a metal
- spike attached perpendicularly to a wooden handle."""),
+    'pickaxe': Item("Pickaxe", "Multi-use hand tool with a metal spike \
+attached to a wooden handle."),
 
-    'boulder':    Item("Boulder", """A large rock too heavy to pick up
- located near the steep cliff.""")
+    'boulder':    Item("Boulder", "A large rock too heavy to pick up \
+located near the steep cliff.", False)
 }
 
 # Added items to rooms
@@ -113,7 +112,7 @@ def get_inv(inventory, current_room):
             color.prCyan(f"\nYou look around and find:")
             for i in current_room.list_items():
                 color.prCyan(f'-{i}')
-        color.prGreen(f"{textwrap.fill(str(player))}")
+        color.prGreen(f"\n{textwrap.fill(str(player))}")
 
 
 def check_inv(item):
@@ -175,7 +174,7 @@ def go_dir(direction, current_room):
         elif direction == 'w' and current_room.w_to:
             go_room(current_room.w_to)
         else:
-            color.prYellow(f"\nYou cannot go this way from"
+            color.prYellow(f"\nYou cannot go this way from "
                            f"{current_room.name}. ")
             text = f"{current_room.description} What would you like to do?"
             color.prGreen(f"{textwrap.fill(text)}")
@@ -193,10 +192,7 @@ def take_item(current_item, current_room):
     room_item = [True for i in current_room.items
                  if current_item == i.name.lower()]
     if len(room_item) > 0:
-        if current_item == 'boulder':
-            color.prYellow(f"\nItem is too heavy to pick up. ")
-        else:
-            color.prGreen(f"\n{item[current_item].on_take(player)}")
+        item[current_item].on_take(player)
     else:
         color.prYellow(f"\nItem is not in the {current_room.name}. ")
 
