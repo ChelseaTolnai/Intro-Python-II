@@ -138,8 +138,8 @@ def has_rope():
     else:
         color.prRed("\nYou attempted to leap accross the chasm and "
                     "failed!")
-        color.prYellow("Next time try to use an item to cross.")
-        color.prGreen("Try again!\n")
+        color.prYellow("\nNext time try to use an item to cross.")
+        color.prGreen("\nTry again!\n")
         return False
 
 
@@ -184,21 +184,19 @@ def check_room(direction, current_room):
 
 
 def go_dir(direction, current_room):
-    if check_room(direction, current_room) is True:
-        if direction == 'n' and current_room.n_to:
-            go_room(current_room.n_to)
-        elif direction == 's' and current_room.s_to:
-            go_room(current_room.s_to)
-        elif direction == 'e' and current_room.e_to:
-            go_room(current_room.e_to)
-        elif direction == 'w' and current_room.w_to:
-            go_room(current_room.w_to)
+    if check_room(direction, current_room):
+
+        direction_cmd = direction + '_to'
+        new_room = getattr(current_room, direction_cmd, False)
+        if new_room:
+            go_room(new_room)
         else:
             color.prYellow(f"\nYou cannot go this way from "
                            f"{current_room.name}.\n")
             text = f"{current_room.description}"
             color.prGreen(f"{textwrap.fill(text)}")
             color.prPurple("\nWhat would you like to do?")
+
     else:
         global game
         game = False
@@ -230,7 +228,7 @@ def drop_item(current_item, current_room):
     if len(player_item) > 0:
         color.prGreen(f"\n{item[current_item].on_drop(player)}")
     else:
-        color.prYellow(f"\nYou are not carrying that item. ")
+        color.prYellow(f"\nYou are not carrying that item.")
 
 game = True
 try:
