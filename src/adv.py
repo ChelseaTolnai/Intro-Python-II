@@ -59,7 +59,7 @@ item = {
     'pickaxe': Item("Pickaxe", """Multi-use hand tool with a metal
  spike attached perpendicularly to a wooden handle."""),
 
-    'rock':    Item("Boulder", """A large rock too heavy to pick up
+    'boulder':    Item("Boulder", """A large rock too heavy to pick up
  located near the steep cliff.""")
 }
 
@@ -67,7 +67,7 @@ item = {
 
 room['foyer'].add_item(item['torch'])
 room['overlook'].add_item(item['rope'])
-room['overlook'].add_item(item['rock'])
+room['overlook'].add_item(item['boulder'])
 room['treasure'].add_item(item['pickaxe'])
 
 # player['player1'].add_item(item['rope'])
@@ -87,7 +87,6 @@ room['treasure'].add_item(item['pickaxe'])
 
 
 def get_inv(inventory, current_room):
-    global player
     if inventory == 'i':
         if len(player.list_items()) < 1:
             color.prCyan(f"\nYou don't have any items at this time.")
@@ -123,18 +122,29 @@ def go_dir(direction, current_room):
 
 
 def go_room(new_room):
-    global player
     player.current_room = new_room
     color.prGreen(f"\n{textwrap.fill(str(player))}")
 
 
-def take_item(item, current_room):
-    room_item = [True for i in current_room.items if item == i.name.lower()]
-    if room_item[0]:
+def take_item(current_item, current_room):
+    room_item = [True for i in current_room.items
+                 if current_item == i.name.lower()]
+    if len(room_item) > 0:
+        if current_item == 'boulder':
+            color.prYellow(f"\nItem is too heavy to pick up. ")
+        else:
+            color.prGreen(f"\n{item[current_item].on_take(player)}")
+    else:
+        color.prYellow(f"\nItem is not in the {current_room.name}. ")
+
+
+def drop_item(item, current_room):
+    player_item = [True for i in player.items if item == i.name.lower()]
+    if len(player_item) > 0:
         print(item)
         # item[item].on_take()
     else:
-        color.prYellow(f"\nItem is not in the {current_room.name}. ")
+        color.prYellow(f"\nYou are not carrying that item. ")
 
 try:
     player = player['player1']
@@ -149,20 +159,25 @@ try:
               "[w]:go west"
               "\nOther       = [action] [object]"
               )
+
         cmd = input("Enter action: ")
+        cmd = cmd.split(' ')
+        action = cmd[0].lower()
+
         if len(cmd) == 1:
-            if cmd == 'q':
-                color.prGreen("\nCome back soon!\n")
-                break
-            elif cmd == 'l' or cmd == 'i':
-                get_inv(cmd, player.current_room)
-            elif cmd == 'n' or cmd == 's' or cmd == 'e' or cmd == 'w':
-                go_dir(cmd, player.current_room)
+            if len(action) == 1:
+                if action == 'q':
+                    color.prGreen("\nCome back soon!\n")
+                    break
+                elif action == 'l' or action == 'i':
+                    get_inv(action, player.current_room)
+                elif action == 'n' or action == 's' or action == 'e' or action == 'w':
+                    go_dir(action, player.current_room)
+                else:
+                    color.prRed("\nInvalid action.")
             else:
-                color.prRed("\nInvalid action.")
+                color.prYellow(f"\n{action} what?")
         else:
-            cmd = cmd.split(' ')
-            action = cmd[0].lower()
             obj = cmd[1].lower()
             if action == 'take' or action == 'get' or action == 'add':
                 take_item(obj, player.current_room)
@@ -172,4 +187,4 @@ try:
                 color.prRed("\nInvalid action.")
 
 except:
-    color.prRed("\nOops, something went wrong!")
+    color.prRed("\nOops, something went wrong!\n")
