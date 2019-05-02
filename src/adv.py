@@ -116,12 +116,48 @@ def get_inv(inventory, current_room):
         color.prGreen(f"{textwrap.fill(str(player))}")
 
 
+def check_inv(item):
+    has_item = [True for i in player.items if i.name.lower() == item]
+    if has_item == [True]:
+        return True
+    else:
+        return False
+
+
+def has_rope():
+    if check_inv('rope'):
+        text = "You succesfully lassoed the rope to a boulder accross " \
+               "the chasm and tied the rope to a boulder in the current " \
+               "room. You shimmy accross the rope and untie it.\n"
+        color.prGreen(f"\n{textwrap.fill(text)}")
+        return True
+    else:
+        color.prRed("\nYou attempted to leap accross the chasm and "
+                    "failed!")
+        color.prYellow("Next time try to use an item to cross.")
+        color.prGreen("Try again!\n")
+        return False
+
+
 def check_room(direction, current_room):
     if current_room.name == 'Snake Den':
         if direction == 'n' or direction == 'e':
             color.prRed("\nA snake has attacked and you died instanstly!")
             color.prGreen("Try again!\n")
             return False
+        elif direction == 's':
+            if has_rope():
+                return True
+            else:
+                return False
+        else:
+            return True
+    elif current_room.name == 'Grand Overlook':
+        if direction == 'n':
+            if has_rope():
+                return True
+            else:
+                return False
         else:
             return True
     else:
@@ -139,7 +175,8 @@ def go_dir(direction, current_room):
         elif direction == 'w' and current_room.w_to:
             go_room(current_room.w_to)
         else:
-            color.prYellow(f"\nYou cannot go this way from {current_room.name}. ")
+            color.prYellow(f"\nYou cannot go this way from"
+                           f"{current_room.name}. ")
             text = f"{current_room.description} What would you like to do?"
             color.prGreen(f"{textwrap.fill(text)}")
     else:
