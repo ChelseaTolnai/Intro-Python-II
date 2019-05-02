@@ -120,16 +120,8 @@ def get_inv(inventory, current_room):
         color.prPurple("\nWhat would you like to do?")
 
 
-def check_inv(item):
-    has_item = [True for i in player.items if i.name.lower() == item]
-    if has_item == [True]:
-        return True
-    else:
-        return False
-
-
 def has_rope():
-    if check_inv('rope'):
+    if 'Rope' in [i.name for i in player.items]:
         text = "You succesfully lassoed the rope to a boulder accross " \
                "the chasm and tied the rope to a boulder in the current " \
                "room. You shimmy accross the rope and untie it.\n"
@@ -144,7 +136,7 @@ def has_rope():
 
 
 def has_pickaxe():
-    if check_inv('pickaxe'):
+    if 'Pickaxe' in [i.name for i in player.items]:
         color.prGreen("\nYou used your pickaxe to break through the wall!")
         return True
     else:
@@ -213,19 +205,15 @@ def go_room(new_room):
         color.prPurple("\nWhat would you like to do?")
 
 
-def take_item(current_item, current_room):
-    room_item = [True for i in current_room.items
-                 if current_item == i.name.lower()]
-    if len(room_item) > 0:
+def take_item(current_item):
+    if current_item in [i.name.lower() for i in player.current_room.items]:
         item[current_item].on_take(player)
     else:
         color.prYellow(f"\nItem is not in the {current_room.name}. ")
 
 
-def drop_item(current_item, current_room):
-    player_item = [True for i in player.items
-                   if current_item == i.name.lower()]
-    if len(player_item) > 0:
+def drop_item(current_item):
+    if current_item in [i.name.lower() for i in player.items]:
         color.prGreen(f"\n{item[current_item].on_drop(player)}")
     else:
         color.prYellow(f"\nYou are not carrying that item.")
@@ -269,9 +257,9 @@ try:
         else:
             obj = cmd[1].lower()
             if action == 'take' or action == 'get' or action == 'add':
-                take_item(obj, player.current_room)
+                take_item(obj)
             elif action == 'drop' or action == 'leave' or action == 'remove':
-                drop_item(obj, player.current_room)
+                drop_item(obj)
             else:
                 color.prRed("\nInvalid action.")
 
