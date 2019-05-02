@@ -120,8 +120,32 @@ def get_inv(inventory, current_room):
         color.prPurple("\nWhat would you like to do?")
 
 
+def check_item(item, items):
+    return item in [i.name.lower() for i in items]
+
+
+def take_item(current_item):
+    if current_item == 'it' and len(player.current_room.items) == 1:
+        player.current_room.items[0].on_take(player)
+    elif current_item == 'it' and len(player.current_room.items) > 1:
+        color.prYellow(f"\n{action.title()} what?")
+    elif check_item(current_item, player.current_room.items):
+        item[current_item].on_take(player)
+    else:
+        color.prYellow(f"\nItem is not in the {player.current_room.name}. ")
+
+
+def drop_item(current_item):
+    if current_item == 'it':
+        player.items[-1].on_drop(player)
+    elif check_item(current_item, player.items):
+        item[current_item].on_drop(player)
+    else:
+        color.prYellow(f"\nYou are not carrying that item.")
+
+
 def has_rope():
-    if 'Rope' in [i.name for i in player.items]:
+    if check_item('rope', player.items):
         text = "You succesfully lassoed the rope to a boulder accross " \
                "the chasm and tied the rope to a boulder in the current " \
                "room. You shimmy accross the rope and untie it.\n"
@@ -136,7 +160,7 @@ def has_rope():
 
 
 def has_pickaxe():
-    if 'Pickaxe' in [i.name for i in player.items]:
+    if check_item('pickaxe', player.items):
         color.prGreen("\nYou used your pickaxe to break through the wall!")
         return True
     else:
@@ -204,25 +228,6 @@ def go_room(new_room):
     else:
         color.prPurple("\nWhat would you like to do?")
 
-
-def take_item(current_item):
-    if current_item == 'it' and len(player.current_room.items) == 1:
-        player.current_room.items[0].on_take(player)
-    elif current_item == 'it' and len(player.current_room.items) > 1:
-        color.prYellow(f"\n{action.title()} what?")
-    elif current_item in [i.name.lower() for i in player.current_room.items]:
-        item[current_item].on_take(player)
-    else:
-        color.prYellow(f"\nItem is not in the {player.current_room.name}. ")
-
-
-def drop_item(current_item):
-    if current_item == 'it':
-        player.items[-1].on_drop(player)
-    elif current_item in [i.name.lower() for i in player.items]:
-        item[current_item].on_drop(player)
-    else:
-        color.prYellow(f"\nYou are not carrying that item.")
 
 game = True
 try:
