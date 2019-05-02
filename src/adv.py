@@ -81,12 +81,10 @@ located near the steep cliff.", False)
 # Added items to rooms
 
 room['foyer'].add_item(item['rope'])
-room['foyer'].add_item(item['lamp'])
 room['overlook'].add_item(item['boulder'])
 room['den'].add_item(item['boulder'])
 room['den'].add_item(item['torch'])
 room['cavern'].add_item(item['pickaxe'])
-room['treasure'].add_item(item['lamp'])
 
 
 # Write a loop that:
@@ -215,7 +213,7 @@ def take_item(current_item):
     elif current_item in [i.name.lower() for i in player.current_room.items]:
         item[current_item].on_take(player)
     else:
-        color.prYellow(f"\nItem is not in the {current_room.name}. ")
+        color.prYellow(f"\nItem is not in the {player.current_room.name}. ")
 
 
 def drop_item(current_item):
@@ -230,6 +228,8 @@ game = True
 try:
     player = player['player1']
     color.prGreen(f"\nWelcome {player.name}! {textwrap.fill(str(player))}")
+    color.prGreen(f"\nRemember to keep looking around. "
+                  "You are able to take and drop items!")
     color.prPurple("\nWhat would you like to do?")
 
     inventories = ['l', 'i']
@@ -242,7 +242,7 @@ try:
               "[s]:go south  / "
               "[e]:go east / "
               "[w]:go west"
-              "\nOther       = [action] [object]"
+              "\nOther       = [action] [object] ex. take rock"
               )
 
         cmd = input("Enter action: ")
