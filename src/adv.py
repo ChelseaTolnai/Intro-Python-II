@@ -81,10 +81,12 @@ located near the steep cliff.", False)
 # Added items to rooms
 
 room['foyer'].add_item(item['rope'])
+room['foyer'].add_item(item['lamp'])
 room['overlook'].add_item(item['boulder'])
 room['den'].add_item(item['boulder'])
+room['den'].add_item(item['torch'])
 room['cavern'].add_item(item['pickaxe'])
-room['treasure'].add_item(item['torch'])
+room['treasure'].add_item(item['lamp'])
 
 
 # Write a loop that:
@@ -209,7 +211,7 @@ def take_item(current_item):
     if current_item == 'it' and len(player.current_room.items) == 1:
         player.current_room.items[0].on_take(player)
     elif current_item == 'it' and len(player.current_room.items) > 1:
-        color.prYellow(f"\n{action} what?")
+        color.prYellow(f"\n{action.title()} what?")
     elif current_item in [i.name.lower() for i in player.current_room.items]:
         item[current_item].on_take(player)
     else:
@@ -259,7 +261,7 @@ try:
                 else:
                     color.prRed("\nInvalid action.")
             else:
-                color.prYellow(f"\n{action} what?")
+                color.prYellow(f"\n{action.title()} what?")
         else:
             obj = cmd[1].lower()
             if action == 'take' or action == 'get' or action == 'add':
