@@ -23,7 +23,15 @@ to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south... Or is it?"""),
+
+    'den': Room("Snake Den", """You've entered a dimly lit area surrounded by
+snakes. One false move in the wrong direction will cause a snake to attack
+and the venom will kill you instantly."""),
+
+    'cavern': Room("Miner's Cavern", """The room is filled with stalagmites and
+stalactites with nooks and crannies everywhere. Looks like at one point miners
+tried to work in here."""),
 }
 
 
@@ -34,6 +42,10 @@ room['foyer'].s_to = room['outside']
 room['foyer'].n_to = room['overlook']
 room['foyer'].e_to = room['narrow']
 room['overlook'].s_to = room['foyer']
+room['overlook'].n_to = room['den']
+room['den'].s_to = room['overlook']
+room['den'].w_to = room['cavern']
+room['cavern'].e_to = room['den']
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
@@ -65,13 +77,11 @@ item = {
 
 # Added items to rooms
 
-room['foyer'].add_item(item['torch'])
-room['overlook'].add_item(item['rope'])
+room['foyer'].add_item(item['rope'])
 room['overlook'].add_item(item['boulder'])
-room['treasure'].add_item(item['pickaxe'])
-
-# player['player1'].add_item(item['rope'])
-# player['player1'].add_item(item['torch'])
+room['den'].add_item(item['boulder'])
+room['cavern'].add_item(item['pickaxe'])
+room['treasure'].add_item(item['torch'])
 
 
 # Write a loop that:
