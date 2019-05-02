@@ -116,19 +116,35 @@ def get_inv(inventory, current_room):
         color.prGreen(f"{textwrap.fill(str(player))}")
 
 
-def go_dir(direction, current_room):
-    if direction == 'n' and current_room.n_to:
-        go_room(current_room.n_to)
-    elif direction == 's' and current_room.s_to:
-        go_room(current_room.s_to)
-    elif direction == 'e' and current_room.e_to:
-        go_room(current_room.e_to)
-    elif direction == 'w' and current_room.w_to:
-        go_room(current_room.w_to)
+def check_room(direction, current_room):
+    if current_room.name == 'Snake Den':
+        if direction == 'n' or direction == 'e':
+            color.prRed("\nA snake has attacked and you died instanstly!")
+            color.prGreen("Try again!\n")
+            return False
+        else:
+            return True
     else:
-        color.prYellow(f"\nYou cannot go this way from {current_room.name}. ")
-        text = f"{current_room.description} What would you like to do?"
-        color.prGreen(f"{textwrap.fill(text)}")
+        return True
+
+
+def go_dir(direction, current_room):
+    if check_room(direction, current_room) is True:
+        if direction == 'n' and current_room.n_to:
+            go_room(current_room.n_to)
+        elif direction == 's' and current_room.s_to:
+            go_room(current_room.s_to)
+        elif direction == 'e' and current_room.e_to:
+            go_room(current_room.e_to)
+        elif direction == 'w' and current_room.w_to:
+            go_room(current_room.w_to)
+        else:
+            color.prYellow(f"\nYou cannot go this way from {current_room.name}. ")
+            text = f"{current_room.description} What would you like to do?"
+            color.prGreen(f"{textwrap.fill(text)}")
+    else:
+        global game
+        game = False
 
 
 def go_room(new_room):
@@ -156,11 +172,12 @@ def drop_item(current_item, current_room):
     else:
         color.prYellow(f"\nYou are not carrying that item. ")
 
+game = True
 try:
     player = player['player1']
     color.prGreen(f"\nWelcome {player.name}! {textwrap.fill(str(player))}")
 
-    while True:
+    while game:
         print("\nOptions     = [l]:look around / [i]:inventory / [q]:quit"
               "\nMove        = "
               "[n]:go north    / "
